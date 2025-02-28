@@ -1,14 +1,28 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { createAppContainer } from 'react-navigation-stack';
+import { createStackNavigator } from 'react-navigation'
+import MenuScreen from './screens/MenuScreen';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <MenuScreen></MenuScreen>
     </View>
   );
 }
+
+const navigator = createStackNavigator(
+  {
+    Menu: MenuScreen
+  },{
+    initialRouteName: "Menu",
+    dafaultNavigationOptions: {
+      title: "App"
+    }
+  }
+  
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -18,3 +32,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default createAppContainer(navigator);
