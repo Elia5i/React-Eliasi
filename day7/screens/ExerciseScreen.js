@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 
 const ExerciseScreen=()=> {
     <View>
-        <Text style={styles.text}>Welcome to Exercie Screen</Text>
+        <Text style={styles.text}>Welcome to Exercise Screen</Text>
     </View>
 }
 

@@ -11,3 +11,4 @@ npm start
 
 To use NStackNavigator
 npx expo install @react-navigation/native @react-navigation/stack
+npx expo install react-native-screens react-native-safe-area-context
