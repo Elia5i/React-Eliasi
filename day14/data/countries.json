@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "name": "Antalya",
+        "country": "Turkey",
+        "description": "Antalya is fifth most popular city in Turkey"
+    },
+    {
+        "id": 2,
+        "name": "Prishtina",
+        "country": "Kosova",
+        "description": "Prishtina is most popular city and the capital of Kosova"
+    },
+    {
+        "id": 3,
+        "name": "Tirana",
+        "country": "Albania",
+        "description": "Tirana is most popular city and the capital of Albania"
+    },
+    {
+        "id": 3,
+        "name": "Berlin",
+        "country": "Germany",
+        "description": "Berlin is most popular city and the capital of Germany"
+    },
+    {
+        "id": 3,
+        "name": "Paris",
+        "country": "France",
+        "description": "Paris is most popular city and the capital of France"
+    }
+]
