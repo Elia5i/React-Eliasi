@@ -5,15 +5,12 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import CountriesScreen from './screens/CountriesScreen';
 
+
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Countries">
-        <Stack.Screen name="Countries" component={CountriesScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ToDos/>
   );
 }
 
