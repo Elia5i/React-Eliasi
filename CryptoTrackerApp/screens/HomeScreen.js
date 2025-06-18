@@ -1,79 +1,135 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 
 export default function HomeScreen({ navigation }) {
   const [coins, setCoins] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [filteredCoins, setFilteredCoins] = useState([]);
 
   useEffect(() => {
     fetchCoins();
   }, []);
 
+  useEffect(() => {
+    const filtered = coins.filter(coin =>
+      coin.name.toLowerCase().includes(search.toLowerCase()) ||
+      coin.symbol.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredCoins(filtered);
+  }, [search, coins]);
+
   const fetchCoins = async () => {
     try {
-      const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
-        params: {
-          vs_currency: 'eur', // Using EUR
-          order: 'market_cap_desc',
-          per_page: 50,
-          page: 1,
-          sparkline: false,
-        },
-      });
-      setCoins(response.data);
+      const res = await axios.get(
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=50&page=1&sparkline=false'
+      );
+      setCoins(res.data);
+      setFilteredCoins(res.data);
     } catch (error) {
-      console.error('Error fetching coins:', error);
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const filteredCoins = coins.filter(coin =>
-    coin.name.toLowerCase().includes(search.toLowerCase()) ||
-    coin.symbol.toLowerCase().includes(search.toLowerCase())
-  );
-
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.coin}
-      onPress={() => navigation.navigate('CoinDetail', { coinId: item.id })}
+      style={styles.coinContainer}
+      onPress={() => navigation.navigate('CoinDetail', { coin: item })} 
     >
-      <Text style={styles.name}>{item.name} ({item.symbol.toUpperCase()})</Text>
-      <Text style={styles.price}>€{item.current_price.toFixed(2)} ({item.price_change_percentage_24h.toFixed(2)}%)</Text>
+      <Text style={styles.coinName}>{item.name} ({item.symbol.toUpperCase()})</Text>
+      <View style={styles.priceContainer}>
+        <Text style={styles.coinPrice}>€{item.current_price.toFixed(2)}</Text>
+        <Text
+          style={[
+            styles.priceChange,
+            { color: item.price_change_percentage_24h >= 0 ? '#4caf50' : '#f44336' },
+          ]}
+        >
+          {item.price_change_percentage_24h.toFixed(2)}%
+        </Text>
+      </View>
     </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3b5bdb" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.search}
-        placeholder="Search crypto..."
+        placeholder="Search by name or symbol..."
+        placeholderTextColor="#8b949e"
+        style={styles.searchInput}
         value={search}
         onChangeText={setSearch}
       />
+
       <FlatList
         data={filteredCoins}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
-  search: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
+  container: {
+    flex: 1,
+    backgroundColor: '#0d1117',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#0d1117',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchInput: {
+    height: 40,
+    backgroundColor: '#161b22',
+    borderRadius: 8,
+    paddingHorizontal: 12,
     marginBottom: 12,
-    borderRadius: 8,
+    color: '#c9d1d9',
   },
-  coin: {
-    padding: 12,
-    backgroundColor: '#f0f0f0',
-    marginBottom: 8,
-    borderRadius: 8,
+  listContent: {
+    paddingBottom: 40,
   },
-  name: { fontSize: 16, fontWeight: 'bold' },
-  price: { fontSize: 14 },
+  coinContainer: {
+    backgroundColor: '#161b22',
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  coinName: {
+    color: '#f0f6fc',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  priceContainer: {
+    alignItems: 'flex-end',
+  },
+  coinPrice: {
+    color: '#c9d1d9',
+    fontSize: 14,
+  },
+  priceChange: {
+    marginTop: 4,
+    fontWeight: '600',
+  },
 });
